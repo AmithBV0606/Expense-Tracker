@@ -2,11 +2,15 @@ import { Hono } from "hono";
 import { z } from "zod";
 import { zValidator } from "@hono/zod-validator";
 
-type Expense = {
-  id: number;
-  title: string;
-  amount: number;
-};
+const expenseSchema = z.object({
+  id: z.number().int().positive().min(1),
+  title: z.string().min(5).max(100),
+  amount: z.number().int().positive(),
+});
+
+type Expense = z.infer<typeof expenseSchema>;
+
+const createPostSchema = expenseSchema.omit({ id: true });
 
 const fakeExpenses: Expense[] = [
   {
@@ -25,11 +29,6 @@ const fakeExpenses: Expense[] = [
     amount: 15.99,
   },
 ];
-
-const createPostSchema = z.object({
-  title: z.string().min(5).max(100),
-  amount: z.number().int().positive(),
-});
 
 export const expensesRoute = new Hono()
   .get("/", (c) => {
