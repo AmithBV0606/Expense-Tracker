@@ -37,7 +37,26 @@ export const expensesRoute = new Hono()
   })
   .post("/", zValidator("json", createPostSchema), async (c) => {
     const data = await c.req.valid("json");
-    console.log(data);
-    fakeExpenses.push({ ...data, id: fakeExpenses.length + 1 });
+    fakeExpenses.push({ id: fakeExpenses.length + 1, ...data });
+    c.status(201);
     return c.json(data);
+  })
+  .get("/:id{[0-9]+}", (c) => {
+    const id = Number.parseInt(c.req.param("id"));
+    const expense = fakeExpenses.find((expense) => expense.id === id);
+    if (!expense) {
+      return c.notFound();
+    }
+    return c.json({ expense });
+  })
+  .delete("/:id{[0-9]+}", (c) => {
+    const id = Number.parseInt(c.req.param("id"));
+    const index = fakeExpenses.findIndex((expense) => expense.id === id);
+    if (index === -1) {
+      return c.notFound();
+    }
+    const deletedExpenses = fakeExpenses.splice(index, 1)[0];
+    return c.json({
+      expense: deletedExpenses,
+    });
   });
