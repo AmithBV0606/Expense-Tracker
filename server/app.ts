@@ -12,10 +12,11 @@ app.use(logger());
 // app.get("/", (c) => c.text("Hello from Hono!"));
 
 // Expenses endpoint :
-app.route("/api/expenses", expensesRoute);
+const apiRoutes = app.basePath("/api").route("/expenses", expensesRoute);
 
 // Serving Static files :
 app.get("*", serveStatic({ root: "./client/dist" }));
 app.get("*", serveStatic({ path: "./client/dist/index.html" }));
 
 export default app;
+export type APIRoutes = typeof apiRoutes;
