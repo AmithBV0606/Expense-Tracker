@@ -5,10 +5,20 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 function App() {
   const [totalAmount, setTotalAmount] = useState(0);
+
+  const totalSpent = async () => {
+    const total = await fetch("http://localhost:3000/api/expenses/total-spent");
+    const data = await total.json();
+    setTotalAmount(data.total);
+  };
+
+  useEffect(() => {
+    totalSpent();
+  }, []);
 
   return (
     <div className="h-screen max-w-md m-auto mt-4">
