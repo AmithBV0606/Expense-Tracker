@@ -5,11 +5,21 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+// import { useEffect, useState } from "react";
 import { api } from "@/lib/api";
 
+async function getTotalSpent() {
+  const result = await api.expenses["total-spent"].$get();
+  if (!result.ok) {
+    throw new Error("Server error");
+  }
+  const data = await result.json();
+  return data;
+}
+
 function App() {
-  const [totalAmount, setTotalAmount] = useState(0);
+  // const [totalAmount, setTotalAmount] = useState(0);
 
   // REST Methodology :
   // useEffect(() => {
@@ -23,15 +33,22 @@ function App() {
   // }, []);
 
   // Hono RPC :
-  useEffect(() => {
-    async function fetchTotal() {
-      const res = await api.expenses["total-spent"].$get();
-      const data = await res.json();
-      setTotalAmount(data.total);
-    }
+  // useEffect(() => {
+  //   async function fetchTotal() {
+  //     const res = await api.expenses["total-spent"].$get();
+  //     const data = await res.json();
+  //     setTotalAmount(data.total);
+  //   }
 
-    fetchTotal();
-  }, []);
+  //   fetchTotal();
+  // }, []);
+
+  const { isPending, error, data } = useQuery({
+    queryKey: ["get-total-spent"],
+    queryFn: getTotalSpent,
+  });
+
+  if (error) return "An error has occured: " + error.message;
 
   return (
     <div className="h-screen max-w-md m-auto mt-4">
@@ -41,7 +58,7 @@ function App() {
           <CardDescription>Total amount you've spent!!</CardDescription>
         </CardHeader>
         <CardContent>
-          <p>{totalAmount}</p>
+          <p>{isPending ? "..." : data.total}</p>
         </CardContent>
       </Card>
     </div>
