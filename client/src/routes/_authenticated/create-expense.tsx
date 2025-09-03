@@ -55,6 +55,12 @@ function CreateExpense() {
         >
           <form.Field
             name="title"
+            validators={{
+              onChange: ({ value }) =>
+                value.length < 3
+                  ? "Title must contain at least 3 characters!!"
+                  : undefined,
+            }}
             children={(field) => (
               <div className="grid w-full max-w-xl items-center gap-3">
                 <Label htmlFor={field.name}>Title</Label>
@@ -72,6 +78,10 @@ function CreateExpense() {
 
           <form.Field
             name="amount"
+            validators={{
+              onChange: ({ value }) =>
+                Number(value) < 0 ? "Amount must be positive!!" : undefined,
+            }}
             children={(field) => (
               <div className="grid w-full max-w-xl items-center gap-3">
                 <Label htmlFor={field.name}>Amount</Label>
