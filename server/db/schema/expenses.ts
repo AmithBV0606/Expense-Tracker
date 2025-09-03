@@ -6,6 +6,8 @@ import {
   index,
   timestamp,
 } from "drizzle-orm/pg-core";
+import { createInsertSchema, createSelectSchema } from "drizzle-zod";
+import { z } from "zod";
 
 export const expenses = pgTable(
   "expenses",
@@ -22,3 +24,11 @@ export const expenses = pgTable(
     };
   }
 );
+
+export const selectExpenseSchema = createSelectSchema(expenses, {
+  title: z
+    .string()
+    .min(3, { message: "Title must contain at least 3 characters!!" }),
+  amount: z.string(),
+});
+export const insertExpenseSchema = createInsertSchema(expenses);
