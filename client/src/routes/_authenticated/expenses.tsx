@@ -17,7 +17,6 @@ export const Route = createFileRoute("/_authenticated/expenses")({
 });
 
 async function getAllExpenses() {
-  // await new Promise((r) => setTimeout(r, 3000));
   const result = await api.expenses.$get();
   if (!result.ok) {
     throw new Error("Server error");
@@ -43,6 +42,7 @@ function Expenses() {
             <TableHead className="w-[100px]">Id</TableHead>
             <TableHead>Title</TableHead>
             <TableHead>Amount</TableHead>
+            <TableHead>Date</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -61,6 +61,9 @@ function Expenses() {
                       <TableCell>
                         <Skeleton className="h-4" />
                       </TableCell>
+                      <TableCell>
+                        <Skeleton className="h-4" />
+                      </TableCell>
                     </TableRow>
                   );
                 })
@@ -69,6 +72,7 @@ function Expenses() {
                   <TableCell className="font-medium">{expense.id}</TableCell>
                   <TableCell>{expense.title}</TableCell>
                   <TableCell>{expense.amount}</TableCell>
+                  <TableCell>{expense.date.split("T")[0]}</TableCell>
                 </TableRow>
               ))}
         </TableBody>

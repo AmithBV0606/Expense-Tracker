@@ -15,6 +15,13 @@
       "when": 1756815636114,
       "tag": "0001_military_preak",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1756864932091,
+      "tag": "0002_nasty_speed",
+      "breakpoints": true
     }
   ]
 }

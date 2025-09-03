@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/card";
 import { useForm } from "@tanstack/react-form";
 import type { AnyFieldApi } from "@tanstack/react-form";
 import { api } from "@/lib/api";
+import { Calendar } from "@/components/ui/calendar";
 
 export const Route = createFileRoute("/_authenticated/create-expense")({
   component: CreateExpense,
@@ -29,6 +30,7 @@ function CreateExpense() {
     defaultValues: {
       title: "",
       amount: "0",
+      date: new Date().toISOString(),
     },
     onSubmit: async ({ value }) => {
       const res = await api.expenses.$post({ json: value });
@@ -92,6 +94,24 @@ function CreateExpense() {
                   onBlur={field.handleBlur}
                   type="number"
                   onChange={(e) => field.handleChange(e.target.value)}
+                />
+                <FieldInfo field={field} />
+              </div>
+            )}
+          />
+
+          <form.Field
+            name="date"
+            children={(field) => (
+              <div className="self-center m-auto w-full">
+                <Calendar
+                  mode="single"
+                  selected={new Date(field.state.value)}
+                  onSelect={(date) =>
+                    field.handleChange((date ?? new Date()).toISOString())
+                  }
+                  className="rounded-md border shadow-sm"
+                  captionLayout="dropdown"
                 />
                 <FieldInfo field={field} />
               </div>
