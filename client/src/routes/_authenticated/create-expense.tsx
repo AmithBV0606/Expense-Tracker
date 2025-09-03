@@ -4,8 +4,9 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { useForm } from "@tanstack/react-form";
 import type { AnyFieldApi } from "@tanstack/react-form";
-import { api } from "@/lib/api";
+import { api, getAllExpensesQueryOptions } from "@/lib/api";
 import { Calendar } from "@/components/ui/calendar";
+import { useQueryClient } from "@tanstack/react-query";
 
 export const Route = createFileRoute("/_authenticated/create-expense")({
   component: CreateExpense,
@@ -23,6 +24,8 @@ function FieldInfo({ field }: { field: AnyFieldApi }) {
 }
 
 function CreateExpense() {
+  const queryClient = useQueryClient();
+
   const navigate = useNavigate();
 
   const form = useForm({
@@ -32,10 +35,18 @@ function CreateExpense() {
       date: new Date().toISOString(),
     },
     onSubmit: async ({ value }) => {
+      const existingExpenses = await queryClient.ensureQueryData(
+        getAllExpensesQueryOptions
+      );
       const res = await api.expenses.$post({ json: value });
       if (!res.ok) {
         throw new Error("Server error!!");
       }
+      const newExpense = await res.json();
+      queryClient.setQueryData(getAllExpensesQueryOptions.queryKey, {
+        ...existingExpenses,
+        expenses: [newExpense, ...existingExpenses.expenses],
+      });
       navigate({ to: "/expenses" });
     },
   });
